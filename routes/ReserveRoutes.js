@@ -1,12 +1,10 @@
 const express = require('express')
 const router = express.Router();
 
-const reserveController = require('../controller/ReserveController');
+const {getAllReserveRooms, getReserVeRoomById} = require('../controller/ReserveController');
 
 
-router.get('/', (req, res)=>{
-         reserveController.getAllReserveRooms();
-        // res.send("Hello");
-})
+router.get('/', getAllReserveRooms);
+// router.get('/room', getReserVeRoomById);
 
 module.exports = router;
