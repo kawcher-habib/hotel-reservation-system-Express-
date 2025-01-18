@@ -5,6 +5,6 @@ const {getAllReserveRooms, getReserVeRoomById} = require('../controller/ReserveC
 
 
 router.get('/', getAllReserveRooms);
-// router.get('/room', getReserVeRoomById);
+router.get('/:id', getReserVeRoomById);
 
 module.exports = router;
