@@ -40,8 +40,28 @@ const getDataByRoomId = (id) => {
 
 }
 
+const CreateNewRoom = (body) => {
+
+    const { guest_name, room_number, contact_number } = body;
+    return new Promise((resolve, reject) => {
+        const sql = `INSERT INTO reservation(guest_name, room_number, contact_number)VALUES(?,?,?)`;
+
+        connection.query(sql, [guest_name, room_number, contact_number], (error, results) => {
+
+            if (error) {
+                console.error(error.message);
+                return reject(error);
+            } else {
+                return resolve({Status: "Success", message:"New Room Created successfully"});
+            }
+        })
+    })
+
+
+}
 
 module.exports = {
     GetAllData,
-    getDataByRoomId
+    getDataByRoomId,
+    CreateNewRoom
 }
