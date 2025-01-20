@@ -40,6 +40,8 @@ const getDataByRoomId = (id) => {
 
 }
 
+// Create New Room
+
 const CreateNewRoom = (body) => {
 
     const { guest_name, room_number, contact_number } = body;
@@ -52,7 +54,7 @@ const CreateNewRoom = (body) => {
                 console.error(error.message);
                 return reject(error);
             } else {
-                return resolve({Status: "Success", message:"New Room Created successfully"});
+                return resolve({ Status: "Success", message: "New Room Created successfully" });
             }
         })
     })
@@ -60,8 +62,55 @@ const CreateNewRoom = (body) => {
 
 }
 
+// Updated Existing Room 
+const updatedRoom = (id, body) =>{
+    const { guest_name, room_number, contact_number } = body;
+    return new Promise((resolve, reject) =>{
+
+        const sql = "UPDATE reservation SET guest_name = ?, room_number =?, contact_number =? WHERE reser_id=?";
+        connection.query(sql, [guest_name, room_number, contact_number, id], (error, results) =>{
+            if(error){
+            console.log(error.message);
+                return reject(error.message);
+            }
+            
+                return resolve({ Status: "Success", message: `${id} Room Updated successfully` });
+            
+        })
+    })
+
+}
+
+
+/// Helper Function
+
+const isItValid = (prefix, id ,callBack) => {
+   
+
+        const sql = `SELECT ${prefix} FROM reservation WHERE ${prefix} = ?`;
+
+       connection.query(sql, [id], (error, results)=>{
+
+            if(error) {
+                return callBack(error, null);
+            }
+
+            if(results.length > 0){
+                return callBack(null, true);
+            }else{
+                return callBack(null, false);
+            }
+        })
+        
+   
+
+
+}
+
 module.exports = {
     GetAllData,
     getDataByRoomId,
-    CreateNewRoom
+    CreateNewRoom,
+    updatedRoom,
+    isItValid
 }

@@ -1,5 +1,5 @@
 
-const { GetAllData, getDataByRoomId, CreateNewRoom } = require('../models/ReserveModel');
+const { GetAllData, getDataByRoomId, CreateNewRoom, updatedRoom, isItValid } = require('../models/ReserveModel');
 
 
 const getAllReserveRooms = async (req, res) => {
@@ -32,6 +32,9 @@ const getReserVeRoomById = async (req, res) => {
 
 }
 
+
+// Create New Room
+
 const createNewRoom = async (req, res) => {
 
     const { guest_name, room_number, contact_number, } = req.body;
@@ -58,8 +61,74 @@ const createNewRoom = async (req, res) => {
 
 }
 
+//Updated Room 
+
+const updatedExistRoomById = async (req, res) => {
+
+    const id = req.params['id'];
+    // const columnName = 'reser_id';
+    // let isValid = false;
+
+    // isItValid(columnName, id, (error, rs)=>{
+    //     if(error){
+    //         console.error(error.message);
+    //     }else{
+    //         if(rs){
+    //             isValid = true;
+    //         }
+    //     }
+    // });
+
+    // console.log(valid);
+
+    // if(isValid){
+    //     console.log("hello");
+    // }
+    // console.log(id);
+
+    // validationChecker(columnName, id)
+
+    // if(!validationChecker(columnName, id)){
+    //     res.status(403).json({status:"error", message:"Invalid id"})
+
+    // }
+
+    const { guest_name, room_number, contact_number } = req.body;
+
+    if (!guest_name) {
+        res.status(400).json({ message: "Guest Name Is Required" });
+    } else if (!room_number) {
+        res.status(400).json({ message: "Room Number Is Required" });
+    } else if (!contact_number) {
+        res.status(400).json({ message: "Contact Number Is Require" });
+    } else {
+
+        try {
+            const response = await updatedRoom(id, req.boyd)
+            res.status(200).json(response)
+        } catch (error) {
+            res.status(500).json({ error });
+
+        }
+
+
+
+    }
+
+
+
+}
+
+//Helper function 
+
+function validationChecker(prefix, id) {
+    isItValid(prefix, id);
+    // return response;
+}
+
 module.exports = {
     getAllReserveRooms,
     getReserVeRoomById,
-    createNewRoom
+    createNewRoom,
+    updatedExistRoomById
 }
