@@ -69,7 +69,7 @@ const updatedExistRoomById = async (req, res) => {
     const body = req.body;
 
     const columnName = 'reser_id';
-    
+
     const isValid = await isItValid(columnName, id);
 
     if (isValid) {
@@ -106,25 +106,25 @@ const updatedExistRoomById = async (req, res) => {
 
 //Delete Room
 
-const deleteExistRoom = async (req, res) =>{
+const deleteExistRoom = async (req, res) => {
 
-        const id = req.params['id'];
-        const columnName = 'reser_id';
+    const id = req.params['id'];
+    const columnName = 'reser_id';
 
-        const isValid = await isItValid(columnName, id);
-        
-        if(isValid){
-            try {
-                const response = await deleteRoom(id);
-                res.status(200).json(response);
-                
-            } catch (error) {
-                res.status(500).json({ error});
-            }
-           
-        }else {
-            res.status(403).json({ status: "error", message: "Invalid id" })
+    const isValid = await isItValid(columnName, id);
+
+    if (isValid) {
+        try {
+            const response = await deleteRoom(id);
+            res.status(200).json(response);
+
+        } catch (error) {
+            res.status(500).json({ error });
         }
+
+    } else {
+        res.status(403).json({ status: "error", message: "Invalid id" })
+    }
 }
 
 //Helper function 

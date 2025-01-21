@@ -1,15 +1,4 @@
-// const { query } = require('express');
-// let conn = require('../db/datadase');
-
-var mysql = require('mysql');
-var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'hotel_reser_db'
-});
-
-connection.connect();
+let connection = require('../db/datadase');
 
 const GetAllData = () => {
     return new Promise((resolve, reject) => {
@@ -28,8 +17,8 @@ const GetAllData = () => {
 const getDataByRoomId = (id) => {
 
     return new Promise((resolve, reject) => {
-        const sql = `SELECT * FROM reservation WHERE room_number=${id}`;
-        connection.query(sql, (error, results) => {
+        const sql = "SELECT * FROM reservation WHERE room_number= ?";
+        connection.query(sql, [id],(error, results) => {
             if (error) {
                 return reject(error);
             }
