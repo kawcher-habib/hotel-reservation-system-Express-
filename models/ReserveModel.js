@@ -63,19 +63,21 @@ const CreateNewRoom = (body) => {
 }
 
 // Updated Existing Room 
-const updatedRoom = (id, body) =>{
+const updatedRoom = (id, body) => {
     const { guest_name, room_number, contact_number } = body;
-    return new Promise((resolve, reject) =>{
+
+    return new Promise((resolve, reject) => {
 
         const sql = "UPDATE reservation SET guest_name = ?, room_number =?, contact_number =? WHERE reser_id=?";
-        connection.query(sql, [guest_name, room_number, contact_number, id], (error, results) =>{
-            if(error){
-            console.log(error.message);
+        connection.query(sql, [guest_name, room_number, contact_number, id], (error, results) => {
+            if (error) {
+                console.log(error.message);
                 return reject(error.message);
             }
-            
-                return resolve({ Status: "Success", message: `${id} Room Updated successfully` });
-            
+
+
+            return resolve({ Status: "Success", message: `${id} Room Updated successfully` });
+
         })
     })
 
@@ -84,25 +86,31 @@ const updatedRoom = (id, body) =>{
 
 /// Helper Function
 
-const isItValid = (prefix, id ,callBack) => {
-   
+const isItValid = (prefix, id) => {
+
+
+    return new Promise((resolve, reject) => {
 
         const sql = `SELECT ${prefix} FROM reservation WHERE ${prefix} = ?`;
 
-       connection.query(sql, [id], (error, results)=>{
+        connection.query(sql, [id], (error, results) => {
 
-            if(error) {
-                return callBack(error, null);
+            if (error) {
+                console.log(error);
+                return  reject(error);
             }
 
-            if(results.length > 0){
-                return callBack(null, true);
-            }else{
-                return callBack(null, false);
+            if (results.length > 0) {
+                return resolve(true);
+            } else {
+                return resolve(false);
             }
         })
-        
-   
+
+
+
+
+    })
 
 
 }
