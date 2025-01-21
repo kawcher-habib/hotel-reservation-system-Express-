@@ -1,5 +1,5 @@
 
-const { GetAllData, getDataByRoomId, CreateNewRoom, updatedRoom, isItValid } = require('../models/ReserveModel');
+const { GetAllData, getDataByRoomId, CreateNewRoom, updatedRoom, deleteRoom, isItValid } = require('../models/ReserveModel');
 
 
 const getAllReserveRooms = async (req, res) => {
@@ -72,8 +72,6 @@ const updatedExistRoomById = async (req, res) => {
     
     const isValid = await isItValid(columnName, id);
 
-    console.log(isValid);
-
     if (isValid) {
         const { guest_name, room_number, contact_number } = body;
 
@@ -106,6 +104,29 @@ const updatedExistRoomById = async (req, res) => {
 
 }
 
+//Delete Room
+
+const deleteExistRoom = async (req, res) =>{
+
+        const id = req.params['id'];
+        const columnName = 'reser_id';
+
+        const isValid = await isItValid(columnName, id);
+        
+        if(isValid){
+            try {
+                const response = await deleteRoom(id);
+                res.status(200).json(response);
+                
+            } catch (error) {
+                res.status(500).json({ error});
+            }
+           
+        }else {
+            res.status(403).json({ status: "error", message: "Invalid id" })
+        }
+}
+
 //Helper function 
 
 function validationChecker(prefix, id) {
@@ -117,5 +138,6 @@ module.exports = {
     getAllReserveRooms,
     getReserVeRoomById,
     createNewRoom,
-    updatedExistRoomById
+    updatedExistRoomById,
+    deleteExistRoom
 }

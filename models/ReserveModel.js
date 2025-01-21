@@ -83,6 +83,25 @@ const updatedRoom = (id, body) => {
 
 }
 
+// Delete Room
+
+const deleteRoom = (id) => {
+
+    return new Promise((resolve, reject) => {
+        const sql = "DELETE FROM reservation WHERE reser_id= ?";
+
+        connection.query(sql, [id], (error, results) => {
+
+            if (error) {
+                console.log(error.message);
+                return reject(error.message);
+            }
+            return resolve({ Status: "success", message: `${id} Room delete successfully` });
+        })
+
+    })
+}
+
 
 /// Helper Function
 
@@ -97,7 +116,7 @@ const isItValid = (prefix, id) => {
 
             if (error) {
                 console.log(error);
-                return  reject(error);
+                return reject(error);
             }
 
             if (results.length > 0) {
@@ -106,9 +125,6 @@ const isItValid = (prefix, id) => {
                 return resolve(false);
             }
         })
-
-
-
 
     })
 
@@ -120,5 +136,6 @@ module.exports = {
     getDataByRoomId,
     CreateNewRoom,
     updatedRoom,
+    deleteRoom,
     isItValid
 }
