@@ -14,10 +14,14 @@ app.use(require('./routes'));
 
 
 //Employees Routes
-app.use('/api/employee', employeeRoutes);
+    app.use('/api/employee', employeeRoutes);
 
 //Reservation Routes
     app.use('/api/reserve', reserveRoutes);
+
+
+    //Query 
+    
     
 
 
