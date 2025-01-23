@@ -1,11 +1,29 @@
 
-const { CreateNewEmp } = require('../models/EmployeeModel');
+const { AllData, GetDataById, CreateNewEmp } = require('../models/EmployeeModel');
 
-const getAllData = (req, res) => {
+const getAllData = async (req, res) => {
+    try {
+        const response = await AllData();
+        return res.status(200).json(response);
 
+    } catch (error) {
+        return res.status(500).json(error);
+
+    }
 }
 
-const getDataById = (req, res) => {
+const getDataById = async (req, res) => {
+    const id = req.params['id'];
+    try {
+
+        const response = await GetDataById(id);
+        return res.status(200).json(response);
+
+    } catch (error) {
+        return res.status(500).json(error.message);
+
+    }
+
 
 }
 

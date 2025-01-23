@@ -6,6 +6,7 @@ const {createTable} = require('../util/queryexicuting');
 
 
 route.get('/', getAllData);
+route.get('/:id', getDataById);
 route.post('/create', createNewEmployee);
 
 
@@ -46,6 +47,10 @@ route.get('/create/table', (req, res)=>{
 
     createTable(sql);
     res.status(200).json("executing");
+})
+
+route.get('/add/column', (req, res)=>{
+    const sql = `ALTER TABLE employees ADD password`;
 })
 
 module.exports = route;
