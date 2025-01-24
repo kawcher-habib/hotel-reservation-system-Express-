@@ -1,12 +1,12 @@
 
 const connection = require('../db/datadase');
 
-const isItValid = (table, prefix, id) => {
+const isItValid = (table, prefix, prefix2,  id) => {
 
 
     return new Promise((resolve, reject) => {
 
-        const sql = `SELECT ${prefix} FROM ${table} WHERE ${prefix} = ?`;
+        const sql = `SELECT ${prefix} FROM ${table} WHERE ${prefix2} = ?`;
 
         connection.query(sql, [id], (error, results) => {
 
