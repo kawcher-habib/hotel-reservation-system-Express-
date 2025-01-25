@@ -1,5 +1,6 @@
 
 const { AllData, GetDataById, CreateNewEmp } = require('../models/EmployeeModel');
+const { isItValid } = require('../util/validationchecker');
 
 const getAllData = async (req, res) => {
     try {
@@ -13,17 +14,24 @@ const getAllData = async (req, res) => {
 }
 
 const getDataById = async (req, res) => {
+
     const id = req.params['id'];
-    try {
+    const isValidId = await isItValid('employees', 'id', 'id', id);
 
-        const response = await GetDataById(id);
-        return res.status(200).json(response);
+    if (isValidId) {
+        try {
 
-    } catch (error) {
-        return res.status(500).json(error.message);
+            const response = await GetDataById(id);
+            return res.status(200).json(response);
+
+        } catch (error) {
+            return res.status(500).json(error.message);
+
+        }
+    } else {
+        return res.status(400).json({ status: "error", message: "Invalid Id" });
 
     }
-
 
 }
 
@@ -45,14 +53,25 @@ const createNewEmployee = async (req, res) => {
         return res.status(400).json({ status: "error", message: "Department is required" });
     }
     else {
-        try {
-            const response = await CreateNewEmp(body);
-            return res.status(200).json({ response });
 
-        } catch (error) {
+        /**
+         * Validation check is user already exist?
+         */
 
-            return res.status(500).json({ error });
+        const isUserExist = await isItValid('employees', 'email', 'email', email);
+        if (!isUserExist) {
 
+            try {
+                const response = await CreateNewEmp(body);
+                return res.status(200).json({ response });
+
+            } catch (error) {
+
+                return res.status(500).json({ error });
+
+            }
+        } else {
+            return res.status(400).json({ status: "error", message: "User Already Exist" });
         }
     }
 
