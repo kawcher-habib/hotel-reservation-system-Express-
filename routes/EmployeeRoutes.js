@@ -1,13 +1,15 @@
 const express = require('express');
 const route = express.Router();
 let conn = require('../db/datadase');
-const {getAllData, getDataById, createNewEmployee} = require('../controller/EmployeeController');
+const {getAllData, getDataById, createNewEmployee, updatedEmployee, employeeStatus} = require('../controller/EmployeeController');
 const {createTable} = require('../util/queryexicuting');
 
 
 route.get('/', getAllData);
 route.get('/:id', getDataById);
 route.post('/create', createNewEmployee);
+route.put('/updated', updatedEmployee);
+route.post('/status/:id', employeeStatus);
 
 
 
@@ -50,7 +52,9 @@ route.get('/create/table', (req, res)=>{
 })
 
 route.get('/add/column', (req, res)=>{
-    const sql = `ALTER TABLE employees ADD password`;
+    const sql = `ALTER TABLE employees ADD status ENUM('0','1') NOT NULL DEFAULT('1') AFTER join_date`;
+    createTable(sql);
+    res.status(200).json("executing");
 })
 
 module.exports = route;

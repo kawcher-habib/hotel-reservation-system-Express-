@@ -16,7 +16,7 @@ const isItValid = (table, prefix, prefix2,  id) => {
             }
 
             if (results.length > 0) {
-                return resolve(true);
+                return resolve({isValid:true, data: results});
             } else {
                 return resolve(false);
             }
