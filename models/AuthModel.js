@@ -13,6 +13,7 @@ const Login = (body, tableName) =>{
 
         const slq = `SELECT * FROM ${tableName} WHERE email= ?`;
         connection.query(slq, [email], (error, result)=>{
+            
                 if(error){
                     return reject(error);
                 }else{
