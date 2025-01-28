@@ -1,24 +1,29 @@
 let connection = require('../db/datadase');
 
+
+
 const GetAllData = () => {
     return new Promise((resolve, reject) => {
 
         const sql = "SELECT * FROM reservation";
+
         connection.query(sql, (error, results) => {
+
             if (error) {
                 return reject(error);
             }
-            resolve(results);
+            return resolve(results);
         })
+
 
     })
 }
 
-const getDataByRoomId = (id) => {
+const GetDataByRoomId = (id) => {
 
     return new Promise((resolve, reject) => {
         const sql = "SELECT * FROM reservation WHERE room_number= ?";
-        connection.query(sql, [id],(error, results) => {
+        connection.query(sql, [id], (error, results) => {
             if (error) {
                 return reject(error);
             }
@@ -29,7 +34,6 @@ const getDataByRoomId = (id) => {
 
 }
 
-// Create New Room
 
 const CreateNewRoom = (body) => {
 
@@ -51,14 +55,14 @@ const CreateNewRoom = (body) => {
 
 }
 
-// Updated Existing Room 
-const updatedRoom = (id, body) => {
+const UpdatedRoom = (id, body) => {
     const { guest_name, room_number, contact_number } = body;
 
     return new Promise((resolve, reject) => {
 
         const sql = "UPDATE reservation SET guest_name = ?, room_number =?, contact_number =? WHERE reser_id=?";
         connection.query(sql, [guest_name, room_number, contact_number, id], (error, results) => {
+
             if (error) {
                 console.log(error.message);
                 return reject(error.message);
@@ -72,9 +76,8 @@ const updatedRoom = (id, body) => {
 
 }
 
-// Delete Room
 
-const deleteRoom = (id) => {
+const DeleteRoom = (id) => {
 
     return new Promise((resolve, reject) => {
         const sql = "DELETE FROM reservation WHERE reser_id= ?";
@@ -92,39 +95,11 @@ const deleteRoom = (id) => {
 }
 
 
-/// Helper Function
-
-const isItValid = (prefix, id) => {
-
-
-    return new Promise((resolve, reject) => {
-
-        const sql = `SELECT ${prefix} FROM reservation WHERE ${prefix} = ?`;
-
-        connection.query(sql, [id], (error, results) => {
-
-            if (error) {
-                console.log(error);
-                return reject(error);
-            }
-
-            if (results.length > 0) {
-                return resolve(true);
-            } else {
-                return resolve(false);
-            }
-        })
-
-    })
-
-
-}
 
 module.exports = {
     GetAllData,
-    getDataByRoomId,
+    GetDataByRoomId,
     CreateNewRoom,
-    updatedRoom,
-    deleteRoom,
-    isItValid
+    UpdatedRoom,
+    DeleteRoom,
 }

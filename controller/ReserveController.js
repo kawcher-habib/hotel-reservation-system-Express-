@@ -1,13 +1,19 @@
 
-const { GetAllData, getDataByRoomId, CreateNewRoom, updatedRoom, deleteRoom, isItValid } = require('../models/ReserveModel');
+const { GetAllData, GetDataByRoomId, CreateNewRoom, UpdatedRoom, DeleteRoom } = require('../models/ReserveModel');
+const { isItValid } = require('../util/validationchecker');
 
 
+/**
+ * Show All Data
+ * 
+ */
 const getAllReserveRooms = async (req, res) => {
-    console.log("Hello! I am from reserve controller")
+
+
     try {
 
         const data = await GetAllData();
-        res.status(200).json(data);
+        return res.status(200).json(data);
 
     } catch (error) {
 
@@ -16,24 +22,42 @@ const getAllReserveRooms = async (req, res) => {
     }
 }
 
+
+/*
+*Show Data By Id
+*  TODO: Validation
+*/
+
 const getReserVeRoomById = async (req, res) => {
 
     try {
 
         const id = req.params['id'];
-        const data = await getDataByRoomId(id)
-        res.status(200).json(data);
+
+        const isValidId = await isItValid('reservation', 'id', 'id', id);
+        if (isValidId.isValid) {
+
+            const data = await GetDataByRoomId(id)
+            return res.status(200).json(data);
+
+        } else {
+            return res.status(400).json({ status: "error", message: "Invalid Id" });
+        }
 
     } catch (error) {
 
         console.log(error.message);
-        res.status(500).json({ message: "An error occurred while fetching reservation data" })
+        return res.status(500).json({ message: "An error occurred while fetching reservation data" })
     }
 
 }
 
 
-// Create New Room
+/**
+ * Reserver New Room
+ *  TODO: When reserved a room send notification in guest providing  phone number
+ *      * Verification Phone number 
+ */
 
 const createNewRoom = async (req, res) => {
 
@@ -47,45 +71,54 @@ const createNewRoom = async (req, res) => {
         res.status(400).json({ message: "Contact Number Is Require" });
     } else {
 
-        try {
-            const response = await CreateNewRoom(req.body);
-            //console.log(response);
-            res.status(200).json(response);
+        const isRoomNumBooked = await isItValid('reservation', 'room_number', 'room_number', room_number);
 
-        } catch (error) {
-            res.status(500).json(error);
+        if (!isRoomNumBooked.isValid) {
 
+            try {
+                const response = await CreateNewRoom(req.body);
+                //console.log(response);
+                return res.status(200).json(response);
+
+            } catch (error) {
+                return res.status(500).json(error);
+
+            }
+        } else {
+            return res.status(400).json({ status: "error", message: `${room_number} Room Already Booked` })
         }
     }
 
 
 }
 
-//Updated Room 
+/*
+* Updated Reserve Data By Id 
+* TODO: Send Notification in phone number
+*
+*/
 
 const updatedExistRoomById = async (req, res) => {
 
     const id = req.params['id'];
     const body = req.body;
 
-    const columnName = 'reser_id';
+    const { guest_name, room_number, contact_number } = body;
 
-    const isValid = await isItValid(columnName, id);
+    if (!guest_name) {
+        res.status(400).json({ message: "Guest Name Is Required" });
+    } else if (!room_number) {
+        res.status(400).json({ message: "Room Number Is Required" });
+    } else if (!contact_number) {
+        res.status(400).json({ message: "Contact Number Is Require" });
+    } else {
 
-    if (isValid) {
-        const { guest_name, room_number, contact_number } = body;
+        const isValidReserveRoom = await isItValid('reservation', 'reser_id', 'reser_id', id);
 
-        if (!guest_name) {
-            res.status(400).json({ message: "Guest Name Is Required" });
-        } else if (!room_number) {
-            res.status(400).json({ message: "Room Number Is Required" });
-        } else if (!contact_number) {
-            res.status(400).json({ message: "Contact Number Is Require" });
-        } else {
-
+        if (isValidReserveRoom.isValid) {
 
             try {
-                const response = await updatedRoom(id, body)
+                const response = await UpdatedRoom(id, body)
                 res.status(200).json(response)
 
             } catch (error) {
@@ -93,9 +126,9 @@ const updatedExistRoomById = async (req, res) => {
 
             }
 
+        } else {
+            res.status(403).json({ status: "error", message: "Invalid id" })
         }
-    } else {
-        res.status(403).json({ status: "error", message: "Invalid id" })
     }
 
 
@@ -104,18 +137,20 @@ const updatedExistRoomById = async (req, res) => {
 
 }
 
-//Delete Room
+/**
+ * Delete Reserve Room
+ * 
+ */
 
 const deleteExistRoom = async (req, res) => {
 
     const id = req.params['id'];
-    const columnName = 'reser_id';
 
-    const isValid = await isItValid(columnName, id);
+    const isValidReserveRoom = await isItValid('reservation', 'reser_id', 'reser_id', id);
 
-    if (isValid) {
+    if (isValidReserveRoom.isValid) {
         try {
-            const response = await deleteRoom(id);
+            const response = await DeleteRoom(id);
             res.status(200).json(response);
 
         } catch (error) {
@@ -127,12 +162,7 @@ const deleteExistRoom = async (req, res) => {
     }
 }
 
-//Helper function 
 
-function validationChecker(prefix, id) {
-    isItValid(prefix, id);
-    // return response;
-}
 
 module.exports = {
     getAllReserveRooms,
