@@ -4,9 +4,13 @@ const { isItValid } = require('../util/validationchecker');
 
 /**
  * TO:DO 
- * Password reset, email validation, status{DONE}, unique id, 
+ * Password reset, email validation, status{DONE}, unique id, API Security  
  */
 
+
+/**
+ * Show All Data
+ */
 const getAllData = async (req, res) => {
     try {
         const response = await AllData();
@@ -18,12 +22,17 @@ const getAllData = async (req, res) => {
     }
 }
 
+
+/**
+ * Show Data By Id
+ */
 const getDataById = async (req, res) => {
 
     const id = req.params['id'];
     const isValidId = await isItValid('employees', 'id', 'id', id);
 
     if (isValidId.isValid) {
+
         try {
 
             const response = await GetDataById(id);
@@ -33,6 +42,7 @@ const getDataById = async (req, res) => {
             return res.status(500).json(error.message);
 
         }
+
     } else {
         return res.status(400).json({ status: "error", message: "Invalid Id" });
 
@@ -40,11 +50,15 @@ const getDataById = async (req, res) => {
 
 }
 
+
+
+/**
+ * Create New Employee
+ */
 const createNewEmployee = async (req, res) => {
     const body = req.body;
 
     const { full_name, email, phone, address, role, dept } = body;
-
 
     if (!full_name) {
         return res.status(400).json({ status: "error", message: "Name is required" });
@@ -79,11 +93,17 @@ const createNewEmployee = async (req, res) => {
         } else {
             return res.status(400).json({ status: "error", message: "User Already Exist" });
         }
+
     }
 
 
 }
 
+
+
+/**
+ * Updated Existing Employee Data By Id
+ */
 const updatedEmployee = async (req, res) => {
 
     const body = req.body;
@@ -106,7 +126,7 @@ const updatedEmployee = async (req, res) => {
         * Validation check is user already exist?
         */
 
-        const isUserExist = await isItValid('employees', 'id', 'id', id); //TODO mail checker(validation)
+        const isUserExist = await isItValid('employees', 'id', 'id', id);
 
         if (isUserExist.isValid) {
 
@@ -129,6 +149,11 @@ const updatedEmployee = async (req, res) => {
 
 }
 
+
+
+/**
+ * Employee Status Update By Id
+ */
 const employeeStatus = async (req, res) => {
 
     const id = req.params['id'];
@@ -138,7 +163,6 @@ const employeeStatus = async (req, res) => {
     }
 
     const isValidUser = await isItValid('employees', 'id, status', 'id', id);
-    // console.log(isValidUser.data[0].status);
 
     if (isValidUser.isValid) {
 
