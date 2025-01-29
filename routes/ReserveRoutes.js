@@ -4,6 +4,7 @@ const router = express.Router();
 const { getAllReserveRooms, getReserVeRoomById, createNewRoom, updatedExistRoomById, deleteExistRoom } = require('../controller/ReserveController');
 
 
+
 router.get('/', getAllReserveRooms);
 router.get('/:id', getReserVeRoomById);
 router.post('/create/room', createNewRoom);

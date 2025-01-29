@@ -1,9 +1,10 @@
 require('dotenv').config('../.env')
 const express = require('express');
-const {notFoundHandler, errorHandler} = require('./error');
-const auth = require('../routes/AuthRoutes');
+const { notFoundHandler, errorHandler } = require('./error');
+const authRoutes = require('../routes/AuthRoutes');
 const reserveRoutes = require('../routes/ReserveRoutes');
 const employeeRoutes = require('../routes/EmployeeRoutes');
+const { authenticate } = require('../middleware/authenticate');
 
 
 
@@ -15,18 +16,24 @@ app.use(require('./routes'));
 
 
 //Auth Routes
-    app.use('/api/auth', auth);
-    
-//Employees Routes
-    app.use('/api/employee', employeeRoutes);
-
-//Reservation Routes
-    app.use('/api/reserve', reserveRoutes);
+app.use('/api/auth', authRoutes);
 
 
-    //Query 
+/// API Access permission [department Admin, front desk department for create,updated, delete and show all data]. 
+    //Employees Routes
     
-    
+    app.use('/api/employee', authenticate, employeeRoutes);
+
+    //Reservation Routes
+    app.use('/api/reserve', authenticate, reserveRoutes);
+
+
+
+
+
+//Query 
+
+
 
 
 // Error Handling

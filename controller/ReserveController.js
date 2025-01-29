@@ -9,16 +9,19 @@ const { isItValid } = require('../util/validationchecker');
  */
 const getAllReserveRooms = async (req, res) => {
 
+    if (req.user.response[0].role == "admin" || req.user.response[0].dept == "front desk") {
+        try {
 
-    try {
+            const data = await GetAllData();
+            return res.status(200).json(data);
 
-        const data = await GetAllData();
-        return res.status(200).json(data);
+        } catch (error) {
 
-    } catch (error) {
-
-        console.error(error.message);
-        res.status(500).json({ message: "An error occurred while fetching reservation data" })
+            console.error(error.message);
+            res.status(500).json({ message: "An error occurred while fetching reservation data" })
+        }
+    } else {
+        return res.status(401).json({ message: "Unauthorized" });
     }
 }
 
@@ -30,24 +33,29 @@ const getAllReserveRooms = async (req, res) => {
 
 const getReserVeRoomById = async (req, res) => {
 
-    try {
+    if (req.user.response[0].role == "admin" || req.user.response[0].dept == "front desk") {
 
-        const id = req.params['id'];
+        try {
 
-        const isValidId = await isItValid('reservation', 'id', 'id', id);
-        if (isValidId.isValid) {
+            const id = req.params['id'];
 
-            const data = await GetDataByRoomId(id)
-            return res.status(200).json(data);
+            const isValidId = await isItValid('reservation', 'id', 'id', id);
+            if (isValidId.isValid) {
 
-        } else {
-            return res.status(400).json({ status: "error", message: "Invalid Id" });
+                const data = await GetDataByRoomId(id)
+                return res.status(200).json(data);
+
+            } else {
+                return res.status(400).json({ status: "error", message: "Invalid Id" });
+            }
+
+        } catch (error) {
+
+            console.log(error.message);
+            return res.status(500).json({ message: "An error occurred while fetching reservation data" })
         }
-
-    } catch (error) {
-
-        console.log(error.message);
-        return res.status(500).json({ message: "An error occurred while fetching reservation data" })
+    } else {
+        return res.status(401).json({ message: "Unauthorized" });
     }
 
 }
@@ -61,34 +69,38 @@ const getReserVeRoomById = async (req, res) => {
 
 const createNewRoom = async (req, res) => {
 
-    const { guest_name, room_number, contact_number, } = req.body;
+    if (req.user.response[0].role == "admin" || req.user.response[0].dept == "front desk") {
 
-    if (!guest_name) {
-        res.status(400).json({ message: "Guest Name Is Required" });
-    } else if (!room_number) {
-        res.status(400).json({ message: "Room Number Is Required" });
-    } else if (!contact_number) {
-        res.status(400).json({ message: "Contact Number Is Require" });
-    } else {
+        const { guest_name, room_number, contact_number, } = req.body;
 
-        const isRoomNumBooked = await isItValid('reservation', 'room_number', 'room_number', room_number);
-
-        if (!isRoomNumBooked.isValid) {
-
-            try {
-                const response = await CreateNewRoom(req.body);
-                //console.log(response);
-                return res.status(200).json(response);
-
-            } catch (error) {
-                return res.status(500).json(error);
-
-            }
+        if (!guest_name) {
+            res.status(400).json({ message: "Guest Name Is Required" });
+        } else if (!room_number) {
+            res.status(400).json({ message: "Room Number Is Required" });
+        } else if (!contact_number) {
+            res.status(400).json({ message: "Contact Number Is Require" });
         } else {
-            return res.status(400).json({ status: "error", message: `${room_number} Room Already Booked` })
-        }
-    }
 
+            const isRoomNumBooked = await isItValid('reservation', 'room_number', 'room_number', room_number);
+
+            if (!isRoomNumBooked.isValid) {
+
+                try {
+                    const response = await CreateNewRoom(req.body);
+                    //console.log(response);
+                    return res.status(200).json(response);
+
+                } catch (error) {
+                    return res.status(500).json(error);
+
+                }
+            } else {
+                return res.status(400).json({ status: "error", message: `${room_number} Room Already Booked` })
+            }
+        }
+    } else {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
 
 }
 
@@ -100,40 +112,41 @@ const createNewRoom = async (req, res) => {
 
 const updatedExistRoomById = async (req, res) => {
 
-    const id = req.params['id'];
-    const body = req.body;
+    if (req.user.response[0].role == "admin" || req.user.response[0].dept == "front desk") {
 
-    const { guest_name, room_number, contact_number } = body;
+        const id = req.params['id'];
+        const body = req.body;
 
-    if (!guest_name) {
-        res.status(400).json({ message: "Guest Name Is Required" });
-    } else if (!room_number) {
-        res.status(400).json({ message: "Room Number Is Required" });
-    } else if (!contact_number) {
-        res.status(400).json({ message: "Contact Number Is Require" });
-    } else {
+        const { guest_name, room_number, contact_number } = body;
 
-        const isValidReserveRoom = await isItValid('reservation', 'reser_id', 'reser_id', id);
-
-        if (isValidReserveRoom.isValid) {
-
-            try {
-                const response = await UpdatedRoom(id, body)
-                res.status(200).json(response)
-
-            } catch (error) {
-                res.status(500).json({ error });
-
-            }
-
+        if (!guest_name) {
+            res.status(400).json({ message: "Guest Name Is Required" });
+        } else if (!room_number) {
+            res.status(400).json({ message: "Room Number Is Required" });
+        } else if (!contact_number) {
+            res.status(400).json({ message: "Contact Number Is Require" });
         } else {
-            res.status(403).json({ status: "error", message: "Invalid id" })
+
+            const isValidReserveRoom = await isItValid('reservation', 'reser_id', 'reser_id', id);
+
+            if (isValidReserveRoom.isValid) {
+
+                try {
+                    const response = await UpdatedRoom(id, body)
+                    res.status(200).json(response)
+
+                } catch (error) {
+                    res.status(500).json({ error });
+
+                }
+
+            } else {
+                res.status(403).json({ status: "error", message: "Invalid id" })
+            }
         }
+    } else {
+        return res.status(401).json({ message: "Unauthorized" });
     }
-
-
-
-
 
 }
 
@@ -144,21 +157,26 @@ const updatedExistRoomById = async (req, res) => {
 
 const deleteExistRoom = async (req, res) => {
 
-    const id = req.params['id'];
+    if (req.user.response[0].role == "admin" || req.user.response[0].dept == "front desk") {
+        const id = req.params['id'];
 
-    const isValidReserveRoom = await isItValid('reservation', 'reser_id', 'reser_id', id);
+        const isValidReserveRoom = await isItValid('reservation', 'reser_id', 'reser_id', id);
 
-    if (isValidReserveRoom.isValid) {
-        try {
-            const response = await DeleteRoom(id);
-            res.status(200).json(response);
+        if (isValidReserveRoom.isValid) {
+            try {
+                const response = await DeleteRoom(id);
+                res.status(200).json(response);
 
-        } catch (error) {
-            res.status(500).json({ error });
+            } catch (error) {
+                res.status(500).json({ error });
+            }
+
+        } else {
+            res.status(403).json({ status: "error", message: "Invalid id" })
         }
 
     } else {
-        res.status(403).json({ status: "error", message: "Invalid id" })
+        return res.status(401).json({ message: "Unauthorized" });
     }
 }
 

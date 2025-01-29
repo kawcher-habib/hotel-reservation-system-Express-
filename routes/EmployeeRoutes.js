@@ -1,12 +1,13 @@
 const express = require('express');
 const route = express.Router();
 let conn = require('../db/datadase');
-const { getAllData, getDataById, createNewEmployee, updatedEmployee, employeeStatus } = require('../controller/EmployeeController');
+const { getAllData, getDataById, getSearchDataById, createNewEmployee, updatedEmployee, employeeStatus } = require('../controller/EmployeeController');
 const { createTable } = require('../util/queryexicuting');
-
+const { authenticate } = require('../middleware/authenticate');
 
 route.get('/', getAllData);
 route.get('/:id', getDataById);
+route.get('/search/:id', getSearchDataById);
 route.post('/create', createNewEmployee);
 route.put('/updated', updatedEmployee);
 route.post('/status/:id', employeeStatus);

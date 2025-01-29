@@ -1,6 +1,9 @@
 
+require('dotenv').config('../.env');
 const { Registration, Login } = require('../models/AuthModel');
 const { isItValid } = require('../util/validationchecker');
+
+const jwt = require('jsonwebtoken');
 
 const registration = async (req, res) => {
 
@@ -9,11 +12,14 @@ const registration = async (req, res) => {
 const login = async (req, res) => {
 
     const body = req.body;
+    const privateKey = process.env.PRIVATE_KEY;
+    
     const { email, password } = body;
 
     if (!email || !password) {
         return res.status(400).json({ status: "error", message: "Email & Password Required" });
     }
+
     const mailSplit = email.split("@");
     let tableName = 'employees';
 
@@ -28,7 +34,9 @@ const login = async (req, res) => {
             return res.status(400).json({ status: "error", message: "Invalid Credential" });
         }
 
-        return res.status(200).json({ status: "success", message: response });
+        const token = jwt.sign({response}, privateKey, {expiresIn: '1h'});
+        
+        return res.status(200).json({ message: "success", token: token });
 
 
     } catch (error) {
