@@ -1,9 +1,9 @@
 
-const connection = require('../db/datadase');
+const {connection} = require('../../db/database');
 
 const AllData = () => {
 
-    const sql = "SELECT * FROM employees";
+    const sql = "SELECT * FROM employees ORDER BY id DESC";
     return new Promise((resolve, reject) => {
         connection.query(sql, (error, result) => {
             if (error) {
@@ -31,12 +31,13 @@ const GetDataById = (id) => {
 }
 
 const CreateNewEmp = (body) => {
-    const { full_name, email, phone, address, role, dept } = body;
+    const {empId, full_name, email, phone, dom, address, role, dept } = body;
+    // console.log(empId);
 
     return new Promise((resolve, reject) => {
 
-        const sql = "INSERT INTO employees(full_name, email, phone, address, role, dept)VALUES(?,?,?,?,?,?)";
-        connection.query(sql, [full_name, email, phone, address, role, dept], (error, result) => {
+        const sql = "INSERT INTO employees(emp_id, full_name, email, phone, dom, address, role, dept)VALUES(?,?,?,?,?,?,?,?)";
+        connection.query(sql, [empId, full_name, email, phone, dom, address, role, dept], (error, result) => {
             if (error) {
                 return reject(error);
             }

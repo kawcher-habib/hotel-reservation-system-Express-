@@ -1,19 +1,21 @@
 
-const { AllData, GetDataById, CreateNewEmp, UpdatedExistEmp, EmpStatus } = require('../models/EmployeeModel');
-const { isItValid } = require('../util/validationchecker');
+const { AllData, GetDataById, CreateNewEmp, UpdatedExistEmp, EmpStatus } = require('../../models/admin/EmployeeModel');
+const { generatedEmployeeId } = require('../../service/employeeService');
+const { isItValid } = require('../../util/validationchecker');
 
 /**
  * TO:DO 
- * Password reset, email validation, status{DONE}, unique id, API Security  
+ * Password reset, email validation, status{DONE}, unique id(DONE), API Security(DONE)
  */
 
 
 /**
  * Show All Data
  */
-const getAllData = async (req, res) => {
+const getEmployees = async (req, res) => {
+    
     if (req.user.response[0].role == 'admin' || req.user.response[0].dept == 'manager') {
-        ;
+        
         try {
             const response = await AllData();
             return res.status(200).json(response);
@@ -23,15 +25,18 @@ const getAllData = async (req, res) => {
 
         }
     } else {
+        
         return res.status(401).json({ message: "Unauthorized" });
     }
+
+    
 }
 
 
 /**
  * Show Data By Id
  */
-const getDataById = async (req, res) => {
+const getEmployeeById = async (req, res) => {
 
     const id = req.user.response[0].id;
     const isValidId = await isItValid('employees', 'id', 'id', id);
@@ -59,18 +64,21 @@ const getDataById = async (req, res) => {
  * Search By Id
  * TODO: search data by employee id , waiting to generate employee id what why 
  */
-const getSearchDataById = async(req, res) =>{
+const getSearchData = async(req, res) =>{
 
 }
+
+
 
 /**
  * Create New Employee
  */
-const createNewEmployee = async (req, res) => {
+const createEmployee = async (req, res) => {
+
     if (req.user.response[0].role == 'admin' || req.user.response[0].dept == 'manager') {
         const body = req.body;
 
-        const { full_name, email, phone, address, role, dept } = body;
+        const { full_name, email, dom, phone, address, role, dept } = body;
 
         if (!full_name) {
             return res.status(400).json({ status: "error", message: "Name is required" });
@@ -82,6 +90,8 @@ const createNewEmployee = async (req, res) => {
             return res.status(400).json({ status: "error", message: "Address is required" });
         } else if (!dept) {
             return res.status(400).json({ status: "error", message: "Department is required" });
+        }else if (!dom) {
+            return res.status(400).json({ status: "error", message: "Date Of Birth is required" });
         }
         else {
 
@@ -94,6 +104,7 @@ const createNewEmployee = async (req, res) => {
             if (!isUserExist.isValid) {
 
                 try {
+                    body.empId = generatedEmployeeId(dom);
                     const response = await CreateNewEmp(body);
                     return res.status(200).json({ response });
 
@@ -206,10 +217,10 @@ const employeeStatus = async (req, res) => {
 
 
 module.exports = {
-    getAllData,
-    getDataById,
-    getSearchDataById,
-    createNewEmployee,
+    getEmployees,
+    getEmployeeById,
+    getSearchData,
+    createEmployee,
     updatedEmployee,
     employeeStatus
 

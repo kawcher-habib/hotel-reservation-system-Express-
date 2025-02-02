@@ -1,5 +1,6 @@
 require('dotenv').config();
 const mysql = require('mysql');
+const { Sequelize } = require('sequelize');
 
 const host = process.env.HOST;
 const user = process.env.USER;
@@ -23,7 +24,29 @@ connection.connect((err) => {
     console.log('Data Base Connected');
 });
 
-module.exports = connection;
+
+
+const sequelize = new Sequelize(database, user, password, {
+    host: host,
+    dialect: 'mysql'
+});
+
+(async () => {
+
+    try {
+        await sequelize.authenticate();
+        console.log("ORM Connection has been established successfully");
+    } catch(error) {
+        console.error('Unable to connect to the database: ', error);
+    }
+
+})();
+
+module.exports = {
+        connection,
+        sequelize
+    }
+
 
 
 // var mysql = require('mysql');

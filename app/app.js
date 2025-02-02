@@ -1,9 +1,10 @@
 require('dotenv').config('../.env')
 const express = require('express');
 const { notFoundHandler, errorHandler } = require('./error');
-const authRoutes = require('../routes/AuthRoutes');
-const reserveRoutes = require('../routes/ReserveRoutes');
-const employeeRoutes = require('../routes/EmployeeRoutes');
+const authRoutes = require('../routes/admin/AuthRoutes');
+const reserveRoutes = require('../routes/admin/ReserveRoutes');
+const employeeRoutes = require('../routes/admin/EmployeeRoutes');
+const hotelRoutes = require('../routes/admin/HotelRoutes');
 const { authenticate } = require('../middleware/authenticate');
 
 
@@ -26,6 +27,9 @@ app.use('/api/auth', authRoutes);
 
     //Reservation Routes
     app.use('/api/reserve', authenticate, reserveRoutes);
+
+    // Hotel Routes
+    app.use('/api/hotel', hotelRoutes);
 
 
 

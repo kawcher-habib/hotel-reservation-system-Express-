@@ -1,20 +1,5 @@
-const express = require('express');
-const route = express.Router();
-let conn = require('../db/datadase');
-const { getAllData, getDataById, getSearchDataById, createNewEmployee, updatedEmployee, employeeStatus } = require('../controller/EmployeeController');
-const { createTable } = require('../util/queryexicuting');
-const { authenticate } = require('../middleware/authenticate');
-
-route.get('/', getAllData);
-route.get('/:id', getDataById);
-route.get('/search/:id', getSearchDataById);
-route.post('/create', createNewEmployee);
-route.put('/updated', updatedEmployee);
-route.post('/status/:id', employeeStatus);
-
-
-
-
+const route = require("express").Router();
+const { createTable } = require("../util/queryexicuting");
 
 /// sql
 route.get('/create/table', (req, res) => {
@@ -53,9 +38,7 @@ route.get('/create/table', (req, res) => {
 })
 
 route.get('/add/column', (req, res) => {
-    const sql = `ALTER TABLE employees ADD status ENUM('0','1') NOT NULL DEFAULT('1') AFTER join_date`;
+    const sql = `ALTER TABLE employees ADD emp_id varchar(150) NOT NULL AFTER id`;
     createTable(sql);
     res.status(200).json("executing");
 })
-
-module.exports = route;

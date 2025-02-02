@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router();
 
-const { getAllReserveRooms, getReserVeRoomById, createNewRoom, updatedExistRoomById, deleteExistRoom } = require('../controller/ReserveController');
+const { getAllReserveRooms, getReserVeRoomById, createNewRoom, updatedExistRoomById, deleteExistRoom } = require('../../controller/admin/ReserveController');
 
 
 

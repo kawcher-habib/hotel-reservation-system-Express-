@@ -1,6 +1,6 @@
 
-const { GetAllData, GetDataByRoomId, CreateNewRoom, UpdatedRoom, DeleteRoom } = require('../models/ReserveModel');
-const { isItValid } = require('../util/validationchecker');
+const { GetAllData, GetDataByRoomId, CreateNewRoom, UpdatedRoom, DeleteRoom } = require('../../models/admin/ReserveModel');
+const { isItValid } = require('../../util/validationchecker');
 
 
 /**

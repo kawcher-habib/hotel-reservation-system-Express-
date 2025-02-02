@@ -1,5 +1,5 @@
 
-const connection = require('../db/datadase');
+const connection = require('../db/database');
 
 const isItValid = (table, prefix, prefix2,  id) => {
 

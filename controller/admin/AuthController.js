@@ -1,7 +1,7 @@
 
 require('dotenv').config('../.env');
-const { Registration, Login } = require('../models/AuthModel');
-const { isItValid } = require('../util/validationchecker');
+const { Registration, Login } = require('../../models/admin/AuthModel');
+const { isItValid } = require('../../util/validationchecker');
 
 const jwt = require('jsonwebtoken');
 
