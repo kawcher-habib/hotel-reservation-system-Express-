@@ -11,6 +11,7 @@ const Hotel = sequelize.define('hotels',{
     },
     hotel_id: {
         type: DataTypes.STRING,
+         unique:'hotel_id',
         allowNull: true
     },
     name: {
@@ -28,12 +29,6 @@ const Hotel = sequelize.define('hotels',{
     amenities: {
         type: DataTypes.TEXT('tiny'),
         allowNull: true
-    },
-    created_at: {
-        type: DataTypes.DATE
-    },
-    updated_at:{
-        type: DataTypes.DATE
     }
 
 
