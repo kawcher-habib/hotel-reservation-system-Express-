@@ -4,10 +4,10 @@ const hotelController = require('../../controller/admin/HotelControllers');
 
 
 route.get('/', hotelController.getHotels );
-route.get('/:id', hotelController.getHotelById);
+route.get('/:hotel_id', hotelController.getHotelById);
 route.post('/create', hotelController.create);
 route.put('/update', hotelController.update);
-route.delete('/delete/:id', hotelController.deleteHotel);
+route.delete('/delete/:hotel_id', hotelController.deleteHotel);
 route.post('/status/:id', hotelController.status);
 
 
