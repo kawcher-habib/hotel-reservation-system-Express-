@@ -8,13 +8,13 @@ const Room = sequelize.define('rooms', {
         primaryKey: true,
         autoIncrement: true
     },
+    room_num:{
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     hotelid: {
         type: DataTypes.STRING,
         allowNull: false,
-        references: {
-            model: 'Hotels',
-            key: 'hotel_id'
-        }
     },
     type: {
         type: DataTypes.TEXT('tiny'),
@@ -35,7 +35,7 @@ const Room = sequelize.define('rooms', {
 // (async () =>{
 //     try {
 //         await Room.sync({force: true}); ///Use `force: true` to drop the table if it already exists otherwise false
-//         console.log('Hotel table created successfully.');
+//         console.log('room table created successfully.');
 //     } catch (error) {
 //         console.error('Error creating Hotel table:', error);
 //     }

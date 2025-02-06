@@ -35,16 +35,18 @@ const getRooms = async (req, res) => {
  */
 
 const getRoomById = async (req, res) => {
-    const roomNum = req.params['room_num'];
+
+    const roomNum = req.params['id'];
     if (!roomNum) return res.status(401).json({ status: "error", message: "room number required" });
 
     try {
-        const response = await Room.findAll({
+        const data = await Room.findAll({
             where: {
                 room_num: roomNum
             }
         })
-        if (response != "") { return res.status(200).json(data) } else { return res.status(200).json({ message: "Data Not Found" }) };
+        if (data != "") { return res.status(200).json(data) }
+        else { return res.status(200).json({ message: "Data Not Found" }) };
 
 
     } catch (error) {
@@ -65,7 +67,7 @@ const getRoomById = async (req, res) => {
 
 /**
  * Create Room
- * 
+ *  TODO: Room Number Generator 
  */
 
 const createRoom = async (req, res) => {
@@ -94,11 +96,11 @@ const createRoom = async (req, res) => {
 
         fs.appendFile(errorFilePath, errorMessage, (err) => {
             if (err) {
-                console.error('Error writing to error log:', err);
+                console.error('Error writing to error log:', error.message);
             }
         });
 
-        return res.status(500).json({ status: "error", message: "Internal Server Error", error: error.message });
+        return res.status(500).json({ status: "error", message: "Internal Server Error" });
     }
 }
 
@@ -108,7 +110,7 @@ const createRoom = async (req, res) => {
  */
 
 const updateRoom = async (req, res) => {
-
+        const body = req.body;
    const { room_num, type, price, capacity, available } = body;
 
     if (!type) {
@@ -156,10 +158,10 @@ const updateRoom = async (req, res) => {
 
 /**
  * Delete Room
- * 
+ *  TODO: Here have problem like show error but query execute 
  */
 const deleteRoom = async (req, res) => {
-    const room_num = req.params['room_num'];
+    const room_num = req.params['id'];
 
     if (!room_num) {
         res.status(400).json({ status: "error", message: "Room Number is required" });
@@ -208,5 +210,8 @@ const roomStatus = async (req, res) => {
 module.exports = {
     getRooms,
     getRoomById,
-    createRoom
+    createRoom,
+    updateRoom,
+    deleteRoom,
+    roomStatus
 }
