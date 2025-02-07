@@ -6,6 +6,7 @@ const reserveRoutes = require('../routes/admin/ReserveRoutes');
 const employeeRoutes = require('../routes/admin/EmployeeRoutes');
 const hotelRoutes = require('../routes/admin/HotelRoutes');
 const roomRoutes = require('../routes/admin/RoomRoutes');
+const bookRoutes = require('../routes/admin/BookingRoutes');
 const { authenticate } = require('../middleware/authenticate');
 
 
@@ -34,6 +35,9 @@ app.use('/api/auth', authRoutes);
 
     // Room Routes
     app.use('/api/room', roomRoutes);
+
+    //Booking
+    app.use('/api/book', bookRoutes)
 
 
 
