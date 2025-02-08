@@ -22,6 +22,20 @@ app.use(require('./routes'));
 app.use('/api/auth', authRoutes);
 
 
+/**
+ * Front End API
+ *  
+ */
+
+
+
+
+
+/**
+ * Admin API
+ * 
+ */
+
 /// API Access permission [department Admin, front desk department for create,updated, delete and show all data]. 
     //Employees Routes
     
