@@ -7,6 +7,8 @@ const employeeRoutes = require('../routes/admin/EmployeeRoutes');
 const hotelRoutes = require('../routes/admin/HotelRoutes');
 const roomRoutes = require('../routes/admin/RoomRoutes');
 const bookRoutes = require('../routes/admin/BookingRoutes');
+const payment = require('../routes/frontEnd/Payment');
+
 const { authenticate } = require('../middleware/authenticate');
 
 
@@ -28,6 +30,14 @@ app.use('/api/auth', authRoutes);
  */
 
 
+/**
+ * Payment
+ *  SSL
+ *  Bkash
+ *  Nogod
+ *  
+ */
+    app.use('/api/payment', payment);
 
 
 
