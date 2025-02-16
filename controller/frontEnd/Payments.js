@@ -1,19 +1,19 @@
-
+require('dotenv').config('.env');
 const SSLCommerzPayment = require('sslcommerz-lts');
-const store_id = 'sview679f746421885';
-const store_password = 'password123ssl';
+const store_id = process.env.SSL_STORE_ID;
+const store_password = process.env.SSL_STORE_PASSWORD;
 const is_live = false;  // sandbox
 
-const payment = (req, res) =>{
+const paymentWithSSl = (req, res) =>{
 
     const data = {
         total_amount: 100,
         currency: 'BDT',
         tran_id: 'REF123', // use unique tran_id for each api call
-        success_url: 'http://localhost:4444/success',
-        fail_url: 'http://localhost:4444/fail',
-        cancel_url: 'http://localhost:4444/cancel',
-        ipn_url: 'http://localhost:4444/ipn',
+        success_url: 'http://localhost:8000/api/ssl/success',
+        fail_url: 'http://localhost:8000/api/ssl/fail',
+        cancel_url: 'http://localhost:8000/api/ssl/cancel',
+        ipn_url: 'http://localhost:8000/api/ssl/ipn',
         shipping_method: 'Courier',
         product_name: 'Computer.',
         product_category: 'Electronic',
@@ -46,4 +46,24 @@ const payment = (req, res) =>{
     
 }
 
-module.exports = payment;
+
+const paymentSuccess = (req, res) =>{
+
+}
+const paymentFail = (req, res) =>{
+
+}
+const paymentCancel = (req, res) =>{
+
+}
+const paymentInp = (req, res) =>{
+
+}
+
+module.exports = {
+    paymentWithSSl,
+    paymentSuccess,
+    paymentFail,
+    paymentCancel,
+    paymentInp
+}
