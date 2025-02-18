@@ -1,19 +1,31 @@
 require('dotenv').config('.env');
 const SSLCommerzPayment = require('sslcommerz-lts');
+const Payment = require('../../models/frontEnd/Payment');
 const store_id = process.env.SSL_STORE_ID;
 const store_password = process.env.SSL_STORE_PASSWORD;
 const is_live = false;  // sandbox
 
-const paymentWithSSl = (req, res) =>{
+const paymentWithSSl = async (req, res) => {
+
+    const tran_id = 'REF' + Math.round(Math.random(1,100));
+
+    const body = {
+        total_amount: 100,
+        currency: 'BDT',
+        tran_id: tran_id,
+        user_id: 'user102392',
+        country: 'Bangladesh',
+        city: 'Dhaka'
+    }
 
     const data = {
         total_amount: 100,
         currency: 'BDT',
-        tran_id: 'REF123', // use unique tran_id for each api call
-        success_url: 'http://localhost:8000/api/ssl/success',
-        fail_url: 'http://localhost:8000/api/ssl/fail',
-        cancel_url: 'http://localhost:8000/api/ssl/cancel',
-        ipn_url: 'http://localhost:8000/api/ssl/ipn',
+        tran_id: tran_id, // use unique tran_id for each api call
+        success_url: `http://localhost:8000/api/payment/ssl/success/${tran_id}`,
+        fail_url: `http://localhost:8000/api/payment/ssl/fail/${tran_id}`,
+        cancel_url: `http://localhost:8000/api/payment/ssl/cancel/${tran_id}`,
+        ipn_url: 'http://localhost:8000/api/payment/ssl/ipn',
         shipping_method: 'Courier',
         product_name: 'Computer.',
         product_category: 'Electronic',
@@ -36,27 +48,68 @@ const paymentWithSSl = (req, res) =>{
         ship_postcode: 1000,
         ship_country: 'Bangladesh',
     };
+
+    await Payment.create(body);
+
     const sslcz = new SSLCommerzPayment(store_id, store_password, is_live);
-    sslcz.init(data).then(apiResponse =>{
+    try {
+
+        const apiResponse = await sslcz.init(data);
+
+        if (!apiResponse.GatewayPageURL) {
+            return res.status(400).json({ message: "Failed to get payment URL" });
+        }
+
+        const valId = apiResponse.sessionkey;
+
+        await Payment.update(
+            { val_id: valId },
+            {
+                where: {
+                    tran_id: tran_id
+                }
+            }
+        )
         console.log(apiResponse);
-        let GatewayPageURL = apiResponse.GatewayPageURL;
-        res.redirect(GatewayPageURL);
-        console.log('redirect url: ', GatewayPageURL);
-    })
-    
-}
 
-
-const paymentSuccess = (req, res) =>{
+        res.redirect(apiResponse.GatewayPageURL);
+    } catch (error) {
+            console.error("Payment initiation failed: ", error);
+            res.status(500).json({message: "Internal server error", error: error.message});
+    }
 
 }
-const paymentFail = (req, res) =>{
+
+
+const paymentSuccess = async (req, res) => {
+    console.dir(req.path);
+    const tranId = req.param('tranid')
+
+    const getData = await Payment.findAll({
+        where:{
+            tran_id: tranId
+        }
+    });
+    // console.log(getData);
+    return res.json(getData);
+
+    // const data = {
+    //     val_id: getData
+    // };
+    // const sslcz = new SSLCommerzPayment(store_id, store_password, is_live)
+    // sslcz.validate(data).then(data => {
+    //     //process the response that got from sslcommerz 
+    //     // https://developer.sslcommerz.com/doc/v4/#order-validation-api
+    // });
 
 }
-const paymentCancel = (req, res) =>{
+const paymentFail = (req, res) => {
 
 }
-const paymentInp = (req, res) =>{
+const paymentCancel = (req, res) => {
+
+}
+const paymentInp = (req, res) => {
 
 }
 
