@@ -7,7 +7,7 @@ const is_live = false;  // sandbox
 
 const paymentWithSSl = async (req, res) => {
 
-    const tran_id = 'REF' + Math.round(Math.random(1,100));
+    const tran_id = 'REF' + Math.round(Math.random(1, 100));
 
     const body = {
         total_amount: 100,
@@ -74,43 +74,65 @@ const paymentWithSSl = async (req, res) => {
 
         res.redirect(apiResponse.GatewayPageURL);
     } catch (error) {
-            console.error("Payment initiation failed: ", error);
-            res.status(500).json({message: "Internal server error", error: error.message});
+        console.error("Payment initiation failed: ", error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
 
 }
 
 
-const paymentSuccess = async (req, res) => {
+const paymentSuccess = (req, res) => {
     console.dir(req.path);
-    const tranId = req.param('tranid')
+    const tranId = req.param('tranid');
 
-    const getData = await Payment.findAll({
-        where:{
-            tran_id: tranId
+     Payment.update(
+        { status: 'Success' },
+        {
+            where: {
+                tran_id: tranId
+            }
         }
-    });
-    // console.log(getData);
-    return res.json(getData);
-
-    // const data = {
-    //     val_id: getData
-    // };
-    // const sslcz = new SSLCommerzPayment(store_id, store_password, is_live)
-    // sslcz.validate(data).then(data => {
-    //     //process the response that got from sslcommerz 
-    //     // https://developer.sslcommerz.com/doc/v4/#order-validation-api
-    // });
+    )
 
 }
 const paymentFail = (req, res) => {
 
+    const tranId = req.param('tranid')
+
+    Payment.update(
+        { status: 'Fail' },
+        {
+            where: {
+                tran_id: tranId
+            }
+        }
+    )
+
 }
 const paymentCancel = (req, res) => {
+    const tranId = req.param('tranid')
+
+    Payment.update(
+        { status: 'Cancel' },
+        {
+            where: {
+                tran_id: tranId
+            }
+        }
+    )
 
 }
 const paymentInp = (req, res) => {
+    const tranId = req.param('tranid')
 
+    Payment.update(
+        { status: 'Inp' },
+        {
+            where: {
+                tran_id: tranId
+            }
+        }
+    )
 }
 
 module.exports = {
